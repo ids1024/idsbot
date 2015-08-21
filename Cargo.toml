@@ -7,3 +7,5 @@ authors = ["Ian D. Scott <ian@perebruin.com>"]
 hyper = "0.6.10"
 serde_json = "0.5"
 regex = "0.1.41"
+irsc = "0.2"
+openssl = "0.6"

@@ -3,6 +3,8 @@ name = "github-bot"
 version = "0.1.0"
 dependencies = [
  "hyper 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "irsc 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "regex 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -28,6 +30,14 @@ dependencies = [
 name = "bitflags"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "carboxyl"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "lazy_static 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "cookie"
@@ -81,6 +91,18 @@ dependencies = [
  "typeable 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicase 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 0.2.37 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "irsc"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "carboxyl 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)",
+ "regex_macros 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -220,6 +242,14 @@ dependencies = [
 name = "regex-syntax"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "regex_macros"
+version = "0.1.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "regex 0.1.41 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "rustc-serialize"
