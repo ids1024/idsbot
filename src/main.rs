@@ -5,24 +5,47 @@ use std::string::String;
 use std::io::Read;
 use serde_json::Value;
 
-fn get_title(user: &str, repo: &str, issue: &str) -> String {
+#[derive(Debug)]
+struct GithubError;
+
+impl From<hyper::error::Error> for GithubError {
+    fn from(_: hyper::error::Error) -> Self {
+        GithubError
+    }
+}
+
+impl From<serde_json::error::Error> for GithubError {
+    fn from(_: serde_json::error::Error) -> Self {
+        GithubError
+    }
+}
+
+impl From<std::io::Error> for GithubError {
+    fn from(_: std::io::Error) -> Self {
+        GithubError
+    }
+}
+
+fn get_title(user: &str, repo: &str, issue: &str) -> Result<String, GithubError> {
     let url = format!("https://api.github.com/repos/{}/{}/issues/{}",
                       user, repo, issue);
     let client = hyper::client::Client::new();
-    let mut resp = client
+    let mut resp = try!(client
         .get(&url)
         .header(hyper::header::UserAgent("ids1024".to_owned()))
-        .send()
-        .unwrap();
+        .send());
 
     let mut body = String::new();
-    resp.read_to_string(&mut body).unwrap();
-    let data: Value = serde_json::from_str(&body).unwrap();
-    let obj = data.as_object().unwrap();
+    try!(resp.read_to_string(&mut body));
+    let data: Value = try!(serde_json::from_str(&body));
+    let obj = try!(data.as_object().ok_or(GithubError));
 
-    let title = obj.get("title").unwrap().as_string().unwrap();
-    let state = obj.get("state").unwrap().as_string().unwrap();
-    let url = obj.get("html_url").unwrap().as_string().unwrap();
+    let title = try!(try!(obj.get("title").ok_or(GithubError))
+                     .as_string().ok_or(GithubError));
+    let state = try!(try!(obj.get("state").ok_or(GithubError))
+                     .as_string().ok_or(GithubError));
+    let url = try!(try!(obj.get("html_url").ok_or(GithubError))
+                        .as_string().ok_or(GithubError));
     let issuetype = 
         if obj.get("pull_request") != None {
             "pull request"
@@ -30,9 +53,9 @@ fn get_title(user: &str, repo: &str, issue: &str) -> String {
             "issue"
         };
 
-    return format!("[{}] [{}] {}\n{}", issuetype, state, title, url);
+    return Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url));
 }
 
 fn main() {
-    println!("{}", get_title("mps-youtube", "mps-youtube", "1"));
+    println!("{:?}", get_title("mps-youtube", "mps-youtube", "1"));
 }
