@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["Ian D. Scott <ian@perebruin.com>"]
 
 [dependencies]
-curl = "0.2"
+hyper = "0.6.10"
 serde_json = "0.5"
