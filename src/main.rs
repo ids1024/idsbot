@@ -36,8 +36,23 @@ fn main() {
     let mut shared = ircclient.into_shared();
 
     let _a = shared.commands()
-        .map(|(mut cl, _msg, c)| {
+        .map(move |(mut cl, msg, c)| {
             if let irsc::command::Command::PRIVMSG(to, content) = c {
+                let from = msg.ident().unwrap().nickname;
+
+                if to == username && &from == "ids1024" {
+                    let mut words = content.split_whitespace();
+                    let command = words.next().unwrap_or("");
+                    let parameter = words.next().unwrap_or("");
+                    match command {
+                        "join" => {
+                            println!("Joining '{}'...", parameter);
+                            cl.join(parameter, None);
+                        }
+                        _ => {},
+                    }
+                }
+
                 match parse_post(&content) {
                     Some(x) => {
                         for line in x.lines() {
