@@ -47,6 +47,9 @@ fn main() {
                     "part" => {
                         server.send(Message::new(None, "PART", Some(vec![parameter]), None)).unwrap();
                     },
+                    "quit" => {
+                        server.send_quit("").unwrap();
+                    }
                     _ => {},
                 }
             }
