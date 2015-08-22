@@ -51,7 +51,10 @@ fn main() {
                 match command {
                     "join" => {
                         server.send_join(parameter).unwrap();
-                    }
+                    },
+                    "part" => {
+                        server.send(Message::new(None, "PART", Some(vec![parameter]), None)).unwrap();
+                    },
                     _ => {},
                 }
             }
