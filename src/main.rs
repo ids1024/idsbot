@@ -13,7 +13,7 @@ fn parse_post(post: &str) -> Option<String> {
     let postregex = Regex::new(r"(\S+)/(\S+)#(\d+)").unwrap();
     let cap = match postregex.captures(post) {
         Some(x) => x,
-        None => { return None; }
+        None => return None
     };
     let user = cap.at(1).unwrap();
     let repo = cap.at(2).unwrap();
