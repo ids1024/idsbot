@@ -43,14 +43,11 @@ fn handle_message(server: &NetIrcServer, from: &str, to: &str, message: &str) {
         }
     }
 
-    match parse_post(&message) {
-        Some(x) => {
-            for line in x.lines() {
-                server.send_privmsg(&to, &line).unwrap();
-            }
-        },
-        None => {}
-    };
+    if let Some(x) = parse_post(&message) {
+        for line in x.lines() {
+            server.send_privmsg(&to, &line).unwrap();
+        }
+    }
 }
 
 fn main() {
