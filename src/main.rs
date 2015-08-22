@@ -23,11 +23,13 @@ fn main() {
     let mut args = std::env::args();
     let username = args.nth(1).expect("No username provided (argument 1)");
     let password = args.next().expect("No password provided (argument 2)");
-    println!("IRC BOT\nUsername: {}\nPassword: {}", username, password);
+    println!("IRC BOT\nUsername: {}\nPassword: {}\n", username, password);
 
+    println!("Connecting to server...");
     let mut ircclient = irsc::client::OwnedClient::new();
     let ssl = Ssl::new(&SslContext::new(SslMethod::Tlsv1).unwrap()).unwrap();
     ircclient.connect_ssl("irc.freenode.org", 6697, ssl);
+    println!("Registering nick...");
     ircclient.register(&username, &username,
                        "Rust Powered IRC Bot", Some(&password));
 
@@ -50,7 +52,9 @@ fn main() {
     let _b = shared.replies()
         .map(|(mut cl, _msg, r)| {
             if let irsc::reply::Reply::RPL_WELCOME(_) = r {
+                println!("Joining channel(s)...");
                 cl.join("#idstest1024", None);
+                println!("Server started!");
             }
         });
 
