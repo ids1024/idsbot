@@ -1,6 +1,7 @@
 extern crate regex;
 extern crate irc;
 extern crate xdg_basedir;
+
 mod github;
 
 use regex::Regex;
