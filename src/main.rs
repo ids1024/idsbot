@@ -54,7 +54,6 @@ fn main() {
             if let irsc::reply::Reply::RPL_WELCOME(_) = r {
                 println!("Joining channel(s)...");
                 cl.join("#idstest1024", None);
-                println!("Server started!");
             }
         });
 
