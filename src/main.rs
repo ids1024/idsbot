@@ -1,10 +1,11 @@
 extern crate regex;
 extern crate irc;
+extern crate xdg_basedir;
 mod github;
 
 use regex::Regex;
-use std::default::Default;
 use irc::client::prelude::*;
+use xdg_basedir::*;
 
 fn parse_post(post: &str) -> Option<String> {
     let postregex = Regex::new(r"(\S+)/(\S+)#(\d+)").unwrap();
@@ -19,20 +20,11 @@ fn parse_post(post: &str) -> Option<String> {
 }
 
 fn main() {
-    let mut args = std::env::args();
-    let username = args.nth(1).expect("No username provided (argument 1)");
-    let password = args.next().expect("No password provided (argument 2)");
-    println!("IRC BOT\nUsername: {}\nPassword: {}\n", username, password);
+    let mut configpath = get_config_home().unwrap();
+    configpath.push("idsbot/config.json");
 
-    let config = Config {
-        nickname: Some(username.clone()),
-        password: Some(password),
-        server: Some(format!("irc.freenode.org")),
-        channels: Some(vec![format!("#idstest1024")]),
-        port: Some(6697),
-        use_ssl: Some(true),
-        .. Default::default()
-    };
+    let config = Config::load(configpath).unwrap();
+    let nickname = config.nickname.clone().expect("Must provide nickname.");
 
     let server = IrcServer::from_config(config).unwrap();
     server.identify().unwrap();
@@ -44,7 +36,7 @@ fn main() {
             let to = message.args[0].to_owned();
             let content = message.suffix.unwrap();
 
-            if to == username && from == "ids1024" {
+            if to == nickname && from == "ids1024" {
                 let mut words = content.split_whitespace();
                 let command = words.next().unwrap_or("");
                 let parameter = words.next().unwrap_or("");
