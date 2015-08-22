@@ -56,5 +56,5 @@ pub fn get_display_text(user: &str, repo: &str, issue: &str)
             "issue"
         };
 
-    return Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url));
+    Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url))
 }
