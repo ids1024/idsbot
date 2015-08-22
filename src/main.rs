@@ -63,7 +63,7 @@ fn main() {
     for message in server.iter() {
         let message = message.unwrap();
         print!("{}", message.into_string());
-        if &message.command[..] == "PRIVMSG" {
+        if message.command == "PRIVMSG" {
             let from = message.get_source_nickname().unwrap().to_owned();
             let to = message.args[0].to_owned();
             let content = message.suffix.unwrap();
