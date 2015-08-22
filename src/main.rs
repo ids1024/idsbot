@@ -20,8 +20,8 @@ fn parse_post(post: &str) -> Option<String> {
     return github::get_display_text(user, repo, number).ok();
 }
 
-fn handle_message(server: &NetIrcServer, from: String, to: String, message: String) {
-    let nickname = server.config().nickname.clone().unwrap();
+fn handle_message(server: &NetIrcServer, from: &str, to: &str, message: &str) {
+    let nickname = server.config().nickname.as_ref().unwrap();
 
     if to == nickname && from == "ids1024" {
         let mut words = message.split_whitespace();
@@ -66,7 +66,7 @@ fn main() {
             let from = message.get_source_nickname().unwrap().to_owned();
             let to = message.args[0].to_owned();
             let content = message.suffix.unwrap();
-            handle_message(&server, from, to, content);
+            handle_message(&server, &from, &to, &content);
         }
     }
 }
