@@ -46,7 +46,7 @@ fn main() {
                         server.send_join(parameter).unwrap();
                     },
                     "part" => {
-                        server.send(Message::new(None, "PART", Some(vec![parameter]), None)).unwrap();
+                        server.send(Command::PART(parameter.to_string(), None)).unwrap();
                     },
                     "quit" => {
                         server.send_quit("").unwrap();
