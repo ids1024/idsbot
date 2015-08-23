@@ -49,12 +49,10 @@ pub fn get_display_text(user: &str, repo: &str, issue: &str)
                      .as_string().ok_or(GithubError));
     let url = try!(try!(obj.get("html_url").ok_or(GithubError))
                         .as_string().ok_or(GithubError));
-    let issuetype = 
-        if obj.get("pull_request").is_some() {
-            "pull request"
-        } else {
-            "issue"
-        };
+    let issuetype = match obj.get("pull_request") {
+        Some(..) => "pull request",
+        None => "issue",
+    };
 
     Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url))
 }
