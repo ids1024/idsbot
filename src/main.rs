@@ -1,6 +1,7 @@
 extern crate regex;
 extern crate irc;
 extern crate xdg_basedir;
+extern crate hyper;
 
 mod github;
 
@@ -8,10 +9,33 @@ use regex::Regex;
 use irc::client::prelude::*;
 use irc::client::server::NetIrcServer;
 use xdg_basedir::*;
+use std::io::Read;
 
 fn parse_post(post: &str) -> Option<String> {
-    let postregex = Regex::new(r"(\S+)/(\S+)#(\d+)").unwrap();
-    let cap = match postregex.captures(post) {
+    let client = hyper::client::Client::new();
+    let urlregex = Regex::new(r"https?://.+\.[:alpha:]{2,}").unwrap();
+
+    match urlregex.captures(post) {
+        Some(x) => {
+            match client.get(x.at(0).unwrap()).send() {
+                Ok(mut resp) => {
+                    let mut body = String::new();
+                    resp.read_to_string(&mut body).unwrap();
+                    let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
+                    match titleregex.captures(&body) {
+                        Some(cap) => { return Some("Title: ".to_string() + cap.at(1).unwrap()); },
+                        None => {},
+                    }
+                },
+                Err(..) => {},
+            }
+
+        },
+        None => {},
+    }
+
+    let issueregex = Regex::new(r"(\S+)/(\S+)#(\d+)").unwrap();
+    let cap = match issueregex.captures(post) {
         Some(x) => x,
         None => return None
     };
