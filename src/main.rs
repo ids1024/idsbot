@@ -13,7 +13,7 @@ use std::io::Read;
 
 fn parse_post(post: &str) -> Option<String> {
     let client = hyper::client::Client::new();
-    let urlregex = Regex::new(r"https?://.+\.[:alpha:]{2,}").unwrap();
+    let urlregex = Regex::new(r"https?://\S+\.[:alpha:]{2,}").unwrap();
 
     match urlregex.captures(post) {
         Some(x) => {
