@@ -34,7 +34,7 @@ fn parse_post(post: &str) -> Option<String> {
         None => {},
     }
 
-    let issueregex = Regex::new(r"(\S+)/(\S+)#(\d+)").unwrap();
+    let issueregex = Regex::new(r"([^ ()]+)/([^ ()]+)#(\d+)").unwrap();
     let cap = match issueregex.captures(post) {
         Some(x) => x,
         None => return None
