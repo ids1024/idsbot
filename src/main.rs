@@ -15,23 +15,15 @@ fn parse_post(post: &str) -> Option<String> {
     let client = hyper::client::Client::new();
     let urlregex = Regex::new(r"https?://\S+\.[:alpha:]{2,}").unwrap();
 
-    match urlregex.captures(post) {
-        Some(x) => {
-            match client.get(x.at(0).unwrap()).send() {
-                Ok(mut resp) => {
-                    let mut body = String::new();
-                    resp.read_to_string(&mut body).unwrap();
-                    let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
-                    match titleregex.captures(&body) {
-                        Some(cap) => { return Some("Title: ".to_string() + cap.at(1).unwrap()); },
-                        None => {},
-                    }
-                },
-                Err(..) => {},
+    if let Some(x) = urlregex.captures(post) {
+        if let Ok(mut resp) = client.get(x.at(0).unwrap()).send() {
+            let mut body = String::new();
+            resp.read_to_string(&mut body).unwrap();
+            let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
+            if let Some(cap) = titleregex.captures(&body) {
+                return Some("Title: ".to_string() + cap.at(1).unwrap());
             }
-
-        },
-        None => {},
+        }
     }
 
     let issueregex = Regex::new(r"([^ ()]+)/([^ ()]+)#(\d+)").unwrap();
