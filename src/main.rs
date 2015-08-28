@@ -21,7 +21,7 @@ fn parse_post(post: &str) -> Option<String> {
             resp.read_to_string(&mut body).unwrap();
             let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
             if let Some(cap) = titleregex.captures(&body) {
-                return Some("Title: ".to_string() + cap.at(1).unwrap());
+                return Some(format!("Title: {}", cap.at(1).unwrap()));
             }
         }
     }
