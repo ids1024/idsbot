@@ -79,9 +79,9 @@ fn main() {
         print!("{}", message.into_string());
         if message.command == "PRIVMSG" {
             let from = message.get_source_nickname().unwrap().to_owned();
-            let to = message.args[0].to_owned();
+            let to = &message.args[0];
             let content = message.suffix.unwrap();
-            handle_message(&server, &from, &to, &content);
+            handle_message(&server, &from, to, &content);
         }
     }
 }
