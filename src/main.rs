@@ -70,7 +70,7 @@ fn handle_message(server: &NetIrcServer, from: &str, to: &str, message: &str) {
 
     if let Some(x) = parse_post(&message) {
         for line in x.lines() {
-            server.send_privmsg(&to, &line).unwrap();
+            server.send_notice(&to, &line).unwrap();
         }
     }
 }
