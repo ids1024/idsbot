@@ -21,8 +21,8 @@ fn parse_post(post: &str) -> Option<String> {
         if let Ok(parsedurl) = Url::parse(x.at(0).unwrap()) {
             if parsedurl.domain().unwrap().ends_with("github.com") {
                 let urlpath = parsedurl.path().unwrap();
-                if (urlpath.len() == 4) &&
-                    ((urlpath[2] == "issues") || urlpath[2] == "pull") {
+                if urlpath.len() == 4 &&
+                    (urlpath[2] == "issues" || urlpath[2] == "pull") {
                         return github::get_display_text(&urlpath[0],
                                                         &urlpath[1],
                                                         &urlpath[3],
