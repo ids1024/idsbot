@@ -1,5 +1,5 @@
 [package]
-name = "github-bot"
+name = "idsbot"
 version = "0.1.0"
 authors = ["Ian D. Scott <ian@perebruin.com>"]
 

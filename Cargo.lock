@@ -1,5 +1,5 @@
 [root]
-name = "github-bot"
+name = "idsbot"
 version = "0.1.0"
 dependencies = [
  "hyper 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
