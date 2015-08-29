@@ -25,7 +25,8 @@ fn parse_post(post: &str) -> Option<String> {
                     ((urlpath[2] == "issues") || urlpath[2] == "pull") {
                         return github::get_display_text(&urlpath[0],
                                                         &urlpath[1],
-                                                        &urlpath[3]).ok();
+                                                        &urlpath[3],
+                                                        false).ok();
                     }
             }
         }
@@ -45,7 +46,7 @@ fn parse_post(post: &str) -> Option<String> {
         let user = cap.at(1).unwrap();
         let repo = cap.at(2).unwrap();
         let number = cap.at(3).unwrap();
-        return github::get_display_text(user, repo, number).ok();
+        return github::get_display_text(user, repo, number, true).ok();
     }
     None
 }

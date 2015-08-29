@@ -27,7 +27,7 @@ impl From<std::io::Error> for GithubError {
     }
 }
 
-pub fn get_display_text(user: &str, repo: &str, issue: &str)
+pub fn get_display_text(user: &str, repo: &str, issue: &str, printurl: bool)
     -> Result<String, GithubError> {
 
     let url = format!("https://api.github.com/repos/{}/{}/issues/{}",
@@ -54,5 +54,9 @@ pub fn get_display_text(user: &str, repo: &str, issue: &str)
         None => "issue",
     };
 
-    Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url))
+    if printurl {
+        Ok(format!("[{}] [{}] {}\n{}", issuetype, state, title, url))
+    } else {
+        Ok(format!("[{}] [{}] {}", issuetype, state, title))
+    }
 }
