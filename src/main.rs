@@ -2,6 +2,7 @@ extern crate regex;
 extern crate irc;
 extern crate xdg_basedir;
 extern crate hyper;
+extern crate url;
 
 mod github;
 
@@ -10,12 +11,24 @@ use irc::client::prelude::*;
 use irc::client::server::NetIrcServer;
 use xdg_basedir::*;
 use std::io::Read;
+use url::Url;
 
 fn parse_post(post: &str) -> Option<String> {
     let client = hyper::client::Client::new();
-    let urlregex = Regex::new(r"https?://\S+\.[:alpha:]{2,}").unwrap();
+    let urlregex = Regex::new(r"https?://\S+\.[:alpha:]{2,}\S+").unwrap();
 
     if let Some(x) = urlregex.captures(post) {
+        if let Ok(parsedurl) = Url::parse(x.at(0).unwrap()) {
+            if parsedurl.domain().unwrap().ends_with("github.com") {
+                let urlpath = parsedurl.path().unwrap();
+                if (urlpath.len() == 4) &&
+                    ((urlpath[2] == "issues") || urlpath[2] == "pull") {
+                        return github::get_display_text(&urlpath[0],
+                                                        &urlpath[1],
+                                                        &urlpath[3]).ok();
+                    }
+            }
+        }
         if let Ok(mut resp) = client.get(x.at(0).unwrap()).send() {
             let mut body = String::new();
             resp.read_to_string(&mut body).unwrap();
