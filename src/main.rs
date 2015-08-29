@@ -59,15 +59,11 @@ fn handle_message(server: &NetIrcServer, from: &str, to: &str, message: &str) {
         let command = words.next().unwrap_or("");
         let parameter = words.next().unwrap_or("");
         match command {
-            "join" => {
-                server.send_join(parameter).unwrap();
-            },
-            "part" => {
-                server.send(Command::PART(parameter.to_string(), None)).unwrap();
-            },
-            "quit" => {
-                server.send_quit("").unwrap();
-            }
+            "join" => server.send_join(parameter).unwrap(),
+            "part" => server.send(
+                Command::PART(parameter.to_string(), None)
+                ).unwrap(),
+            "quit" => server.send_quit("").unwrap(),
             _ => {},
         }
     }
