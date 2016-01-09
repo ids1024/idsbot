@@ -4,9 +4,9 @@ version = "0.1.0"
 authors = ["Ian D. Scott <ian@perebruin.com>"]
 
 [dependencies]
-hyper = "0.6.10"
-serde_json = "0.5"
-regex = "0.1.41"
-irc = "0.9.0"
+hyper = "0.7.2"
+serde_json = "0.6.0"
+regex = "0.1.46"
+irc = "0.9.2"
 xdg-basedir = "0.2.2"
-url = "0.2.37"
+url = "0.5.2"
