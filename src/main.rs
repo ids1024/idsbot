@@ -8,9 +8,10 @@ mod github;
 
 use regex::Regex;
 use irc::client::prelude::*;
-use irc::client::server::NetIrcServer;
 use xdg_basedir::*;
 use std::io::Read;
+use std::vec::Vec;
+use std::iter::FromIterator;
 use url::Url;
 
 fn parse_post(post: &str) -> Option<String> {
@@ -20,7 +21,7 @@ fn parse_post(post: &str) -> Option<String> {
     if let Some(x) = urlregex.captures(post) {
         if let Ok(parsedurl) = Url::parse(x.at(0).unwrap()) {
             if parsedurl.domain().unwrap().ends_with("github.com") {
-                let urlpath = parsedurl.path().unwrap();
+                let urlpath = Vec::from_iter(parsedurl.path_segments().unwrap());
                 if urlpath.len() == 4 &&
                     (urlpath[2] == "issues" || urlpath[2] == "pull") {
                         return github::get_display_text(&urlpath[0],
@@ -54,7 +55,7 @@ fn parse_post(post: &str) -> Option<String> {
     None
 }
 
-fn handle_message(server: &NetIrcServer, from: &str, to: &str, message: &str) {
+fn handle_message(server: &IrcServer, from: &str, to: &str, message: &str) {
     let nickname = server.config().nickname.as_ref().unwrap();
 
     if to == nickname && from == "ids1024" {
@@ -88,12 +89,10 @@ fn main() {
 
     for message in server.iter() {
         let message = message.unwrap();
-        print!("{}", message.into_string());
-        if message.command == "PRIVMSG" {
-            let from = message.get_source_nickname().unwrap().to_owned();
-            let to = &message.args[0];
-            let content = message.suffix.unwrap();
-            handle_message(&server, &from, to, &content);
+        print!("{}", message.to_string());
+        let from = message.source_nickname().map(|s| s.to_owned());
+        if let Command::PRIVMSG(to, content) = message.command {
+            handle_message(&server, &from.unwrap(), &to, &content);
         }
     }
 }
