@@ -1,4 +1,5 @@
 extern crate regex;
+#[macro_use] extern crate lazy_static;
 extern crate irc;
 extern crate xdg_basedir;
 extern crate hyper;
@@ -16,10 +17,14 @@ use url::Url;
 
 fn parse_post(post: &str) -> Option<String> {
     let client = hyper::client::Client::new();
-    let urlregex = Regex::new(r"https?://\S+\.[:alpha:]{2,}\S+").unwrap();
-    let issueregex = Regex::new(r"([^ ()]+)/([^ ()]+)#(\d+)").unwrap();
+    lazy_static! {
+        static ref URL_REGEX: Regex = Regex::new(
+            r"https?://\S+\.[:alpha:]{2,}\S+").unwrap();
+        static ref ISSUE_REGEX: Regex = Regex::new(
+            r"([^ ()]+)/([^ ()]+)#(\d+)").unwrap();
+    }
 
-    if let Some(x) = urlregex.captures(post) {
+    if let Some(x) = URL_REGEX.captures(post) {
         if let Ok(parsedurl) = Url::parse(x.at(0).unwrap()) {
             if parsedurl.domain().unwrap().ends_with("github.com") {
                 let urlpath = Vec::from_iter(parsedurl.path_segments().unwrap());
@@ -42,7 +47,7 @@ fn parse_post(post: &str) -> Option<String> {
                 return Some(format!("Title: {}", cap.at(1).unwrap()));
             }
         }
-    } else if let Some(cap) = issueregex.captures(post) {
+    } else if let Some(cap) = ISSUE_REGEX.captures(post) {
         let user = cap.at(1).unwrap();
         let repo = cap.at(2).unwrap();
         let number = cap.at(3).unwrap();
