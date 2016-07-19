@@ -22,6 +22,8 @@ fn parse_post(post: &str) -> Option<String> {
             r"https?://\S+\.[:alpha:]{2,}\S+").unwrap();
         static ref ISSUE_REGEX: Regex = Regex::new(
             r"([^ ()]+)/([^ ()]+)#(\d+)").unwrap();
+        static ref TITLE_REGEX: Regex = Regex::new(
+            r"<title>(.+)</title>").unwrap();
     }
 
     if let Some(x) = URL_REGEX.captures(post) {
@@ -41,9 +43,7 @@ fn parse_post(post: &str) -> Option<String> {
             let mut body = String::new();
             if let Err(..) = resp.read_to_string(&mut body) {
                 return None; // Not UTF8 (binary file?)
-            }
-            let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
-            if let Some(cap) = titleregex.captures(&body) {
+            } else if let Some(cap) = TITLE_REGEX.captures(&body) {
                 return Some(format!("Title: {}", cap.at(1).unwrap()));
             }
         }
