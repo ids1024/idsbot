@@ -33,9 +33,8 @@ fn parse_post(post: &str) -> Option<String> {
         }
         if let Ok(mut resp) = client.get(x.at(0).unwrap()).send() {
             let mut body = String::new();
-            match resp.read_to_string(&mut body) {
-                Ok(..) => {},
-                Err(..) => return None // Not UTF8 (binary file?)
+            if let Err(..) = resp.read_to_string(&mut body) {
+                return None; // Not UTF8 (binary file?)
             }
             let titleregex = Regex::new(r"<title>(.+)</title>").unwrap();
             if let Some(cap) = titleregex.captures(&body) {
