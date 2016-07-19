@@ -35,7 +35,7 @@ pub fn get_display_text(user: &str, repo: &str, issue: &str, printurl: bool)
     let client = hyper::client::Client::new();
     let mut resp = try!(client
         .get(&url)
-        .header(hyper::header::UserAgent("ids1024".to_owned()))
+        .header(hyper::header::UserAgent("idsbot".to_owned()))
         .send());
 
     let mut body = String::new();
