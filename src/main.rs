@@ -26,8 +26,8 @@ fn parse_post(post: &str) -> Option<String> {
             r"<title>(.+)</title>").unwrap();
     }
 
-    if let Some(x) = URL_REGEX.captures(post) {
-        if let Ok(parsedurl) = Url::parse(x.at(0).unwrap()) {
+    if let Some(url) = URL_REGEX.captures(post).map(|m| m.at(0).unwrap()) {
+        if let Ok(parsedurl) = Url::parse(url) {
             if parsedurl.domain().unwrap().ends_with("github.com") {
                 let urlpath = Vec::from_iter(parsedurl.path_segments().unwrap());
                 if urlpath.len() == 4 &&
@@ -39,7 +39,7 @@ fn parse_post(post: &str) -> Option<String> {
                     }
             }
         }
-        if let Ok(mut resp) = client.get(x.at(0).unwrap()).send() {
+        if let Ok(mut resp) = client.get(url).send() {
             let mut body = String::new();
             if let Err(..) = resp.read_to_string(&mut body) {
                 return None; // Not UTF8 (binary file?)
