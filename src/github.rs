@@ -27,14 +27,18 @@ impl From<std::io::Error> for GithubError {
     }
 }
 
-pub fn get_display_text(user: &str, repo: &str, issue: &str, printurl: bool)
-    -> Result<String, GithubError> {
+pub fn get_display_text(user: &str,
+                        repo: &str,
+                        issue: &str,
+                        printurl: bool)
+                        -> Result<String, GithubError> {
 
     let url = format!("https://api.github.com/repos/{}/{}/issues/{}",
-                      user, repo, issue);
+                      user,
+                      repo,
+                      issue);
     let client = hyper::client::Client::new();
-    let mut resp = try!(client
-        .get(&url)
+    let mut resp = try!(client.get(&url)
         .header(hyper::header::UserAgent("idsbot".to_owned()))
         .send());
 
@@ -44,11 +48,14 @@ pub fn get_display_text(user: &str, repo: &str, issue: &str, printurl: bool)
     let obj = try!(data.as_object().ok_or(GithubError));
 
     let title = try!(try!(obj.get("title").ok_or(GithubError))
-                     .as_string().ok_or(GithubError));
+        .as_string()
+        .ok_or(GithubError));
     let state = try!(try!(obj.get("state").ok_or(GithubError))
-                     .as_string().ok_or(GithubError));
+        .as_string()
+        .ok_or(GithubError));
     let url = try!(try!(obj.get("html_url").ok_or(GithubError))
-                        .as_string().ok_or(GithubError));
+        .as_string()
+        .ok_or(GithubError));
     let issuetype = match obj.get("pull_request") {
         Some(..) => "pull request",
         None => "issue",

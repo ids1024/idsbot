@@ -1,5 +1,6 @@
 extern crate regex;
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate lazy_static;
 extern crate irc;
 extern crate xdg_basedir;
 extern crate hyper;
@@ -30,13 +31,10 @@ fn parse_post(post: &str) -> Option<String> {
         if let Ok(parsedurl) = Url::parse(url) {
             if parsedurl.domain().unwrap().ends_with("github.com") {
                 let urlpath = Vec::from_iter(parsedurl.path_segments().unwrap());
-                if urlpath.len() == 4 &&
-                    (urlpath[2] == "issues" || urlpath[2] == "pull") {
-                        return github::get_display_text(&urlpath[0],
-                                                        &urlpath[1],
-                                                        &urlpath[3],
-                                                        false).ok();
-                    }
+                if urlpath.len() == 4 && (urlpath[2] == "issues" || urlpath[2] == "pull") {
+                    return github::get_display_text(&urlpath[0], &urlpath[1], &urlpath[3], false)
+                        .ok();
+                }
             }
         }
         if let Ok(mut resp) = client.get(url).send() {
@@ -65,11 +63,12 @@ fn handle_message(server: &IrcServer, from: &str, to: &str, message: &str) {
         let parameter = words.next().unwrap_or("");
         match command {
             "join" => server.send_join(parameter).unwrap(),
-            "part" => server.send(
-                Command::PART(parameter.to_string(), None)
-                ).unwrap(),
+            "part" => {
+                server.send(Command::PART(parameter.to_string(), None))
+                    .unwrap()
+            }
             "quit" => server.send_quit("").unwrap(),
-            _ => {},
+            _ => {}
         }
     }
 
