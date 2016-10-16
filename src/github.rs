@@ -48,13 +48,13 @@ pub fn get_display_text(user: &str,
     let obj = try!(data.as_object().ok_or(GithubError));
 
     let title = try!(try!(obj.get("title").ok_or(GithubError))
-        .as_string()
+        .as_str()
         .ok_or(GithubError));
     let state = try!(try!(obj.get("state").ok_or(GithubError))
-        .as_string()
+        .as_str()
         .ok_or(GithubError));
     let url = try!(try!(obj.get("html_url").ok_or(GithubError))
-        .as_string()
+        .as_str()
         .ok_or(GithubError));
     let issuetype = match obj.get("pull_request") {
         Some(..) => "pull request",
