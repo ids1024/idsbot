@@ -38,24 +38,24 @@ pub fn get_display_text(user: &str,
                       repo,
                       issue);
     let client = hyper::client::Client::new();
-    let mut resp = try!(client.get(&url)
+    let mut resp = client.get(&url)
         .header(hyper::header::UserAgent("idsbot".to_owned()))
-        .send());
+        .send()?;
 
     let mut body = String::new();
-    try!(resp.read_to_string(&mut body));
-    let data: Value = try!(serde_json::from_str(&body));
-    let obj = try!(data.as_object().ok_or(GithubError));
+    resp.read_to_string(&mut body)?;
+    let data: Value = serde_json::from_str(&body)?;
+    let obj = data.as_object().ok_or(GithubError)?;
 
-    let title = try!(try!(obj.get("title").ok_or(GithubError))
+    let title = obj.get("title").ok_or(GithubError)?
         .as_str()
-        .ok_or(GithubError));
-    let state = try!(try!(obj.get("state").ok_or(GithubError))
+        .ok_or(GithubError)?;
+    let state = obj.get("state").ok_or(GithubError)?
         .as_str()
-        .ok_or(GithubError));
-    let url = try!(try!(obj.get("html_url").ok_or(GithubError))
+        .ok_or(GithubError)?;
+    let url = obj.get("html_url").ok_or(GithubError)?
         .as_str()
-        .ok_or(GithubError));
+        .ok_or(GithubError)?;
     let issuetype = match obj.get("pull_request") {
         Some(..) => "pull request",
         None => "issue",
