@@ -1,16 +1,15 @@
-extern crate std;
-extern crate hyper;
-extern crate serde_json;
-
 use std::string::String;
-use std::io::Read;
-use self::serde_json::Value;
+use std::io::{self, Read};
+use serde_json::{self, Value};
+use reqwest;
+use reqwest::header::UserAgent;
+use url;
 
 #[derive(Debug)]
 pub struct GithubError;
 
-impl From<hyper::error::Error> for GithubError {
-    fn from(_: hyper::error::Error) -> Self {
+impl From<reqwest::Error> for GithubError {
+    fn from(_: reqwest::Error) -> Self {
         GithubError
     }
 }
@@ -21,8 +20,14 @@ impl From<serde_json::error::Error> for GithubError {
     }
 }
 
-impl From<std::io::Error> for GithubError {
-    fn from(_: std::io::Error) -> Self {
+impl From<io::Error> for GithubError {
+    fn from(_: io::Error) -> Self {
+        GithubError
+    }
+}
+
+impl From<url::ParseError> for GithubError {
+    fn from(_: url::ParseError) -> Self {
         GithubError
     }
 }
@@ -37,11 +42,9 @@ pub fn get_display_text(user: &str,
                       user,
                       repo,
                       issue);
-    let client = hyper::client::Client::new();
-    let mut resp = client.get(&url)
-        .header(hyper::header::UserAgent("idsbot".to_owned()))
-        .send()?;
-
+    let mut resp = reqwest::Client::new()?.get(&url)?
+                         .header(UserAgent::new("idsbot"))
+                         .send()?;
     let mut body = String::new();
     resp.read_to_string(&mut body)?;
     let data: Value = serde_json::from_str(&body)?;
